@@ -118,6 +118,8 @@ const GraphDisplay = () => {
         .attr('width', '100%')
         .attr('height', '100%')
         .attr('viewBox', [-width / 2, -height / 2, width, height])
+        // Add a class to the SVG for identification
+        .attr('class', 'graph-svg-canvas') 
         .call(d3.zoom().on("zoom", (event) => {
            g.attr("transform", event.transform)
         }));
@@ -145,7 +147,7 @@ const GraphDisplay = () => {
         .attr('stroke', '#fff')
         .attr('stroke-width', 1.5)
         .on('click', (event, d) => {
-          event.stopPropagation(); // Prevent background click
+          // We no longer need stopPropagation here as the parent handler is smarter
           setSelectedNode(d);
         })
         .call(drag(simulation));
@@ -221,14 +223,24 @@ const GraphDisplay = () => {
           {loading ? 'Refreshing...' : '⟳ Refresh'}
         </button>
       </div>
-      <div className="graph-container" onClick={() => setSelectedNode(null)}>
-        {loading ? (
-          <div className="loading-text">Loading Data...</div>
-        ) : (
-          <div ref={d3Container} style={{ width: '100%', height: '100%' }} />
-        )}
+      <div className="content-wrapper">
+        <div 
+          className="graph-container" 
+          onClick={(e) => {
+            // Close legend only if the click is on the SVG background, not a node
+            if (e.target.classList.contains('graph-svg-canvas')) {
+              setSelectedNode(null);
+            }
+          }}
+        >
+          {loading ? (
+            <div className="loading-text">Loading Data...</div>
+          ) : (
+            <div ref={d3Container} style={{ width: '100%', height: '100%' }} />
+          )}
+        </div>
         {selectedNode && (
-          <div className="node-legend">
+          <div className="properties-sidebar">
             <h4>Node Properties</h4>
             <ul>
               {Object.entries(selectedNode)
@@ -239,7 +251,7 @@ const GraphDisplay = () => {
                   </li>
               ))}
             </ul>
-            <button className="close-legend" onClick={() => setSelectedNode(null)}>Close</button>
+            <button className="close-sidebar-btn" onClick={() => setSelectedNode(null)}>Close</button>
           </div>
         )}
       </div>
