@@ -1,0 +1,25 @@
+.query-result-display {
+  max-height: 300px;
+  overflow: auto;
+  margin-bottom: 16px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.query-result-display.error {
+  color: #d32f2f;
+}
+
+.query-result-display table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.query-result-display th,
+.query-result-display td {
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  text-align: left;
+}

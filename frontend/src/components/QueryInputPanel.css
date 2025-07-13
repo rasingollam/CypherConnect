@@ -1,0 +1,36 @@
+.query-input-panel {
+  margin-top: auto;
+  padding: 12px 0 0 0;
+  border-top: 1px solid #eee;
+}
+
+.query-input-panel textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 8px;
+  margin-bottom: 8px;
+  resize: vertical;
+}
+
+.query-type-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.query-type-toggle button {
+  padding: 6px 16px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.query-type-toggle button.active {
+  background: #1976d2;
+  color: #fff;
+}
+
+.run-query-btn {
+  background: #43a047;
+  color: #fff;
+}
