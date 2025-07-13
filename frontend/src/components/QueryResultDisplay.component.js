@@ -3,11 +3,10 @@ import './QueryResultDisplay.css';
 
 const QueryResultDisplay = ({ result }) => {
   if (!result) return <div className="query-result-display">No results yet.</div>;
-  if (result.error) return <div className="query-result-display error">Error: {result.error}</div>;
+  if (result.error) return <div className="query-result-display error">❌ Error: {result.error}</div>;
   if (typeof result.result === 'string')
-    return <div className="query-result-display">{result.result}</div>;
+    return <div className="query-result-display success">{result.result}</div>;
   if (Array.isArray(result.result) && result.result.length > 0) {
-    // Display as table
     const keys = Object.keys(result.result[0]);
     return (
       <div className="query-result-display">
@@ -28,7 +27,6 @@ const QueryResultDisplay = ({ result }) => {
       </div>
     );
   }
-  // Fallback to JSON
   return (
     <div className="query-result-display">
       <pre>{JSON.stringify(result.result, null, 2)}</pre>

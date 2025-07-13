@@ -2,19 +2,37 @@
   display: flex;
   height: 100vh;
   background: #181a1b;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
 .left-panel {
-  width: 35%;
+  width: 36%;
+  min-width: 340px;
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  border-right: 1px solid #23272b;
+  padding: 24px 20px 24px 24px;
+  border-right: 1.5px solid #23272b;
   background: #23272b;
+  box-shadow: 2px 0 8px 0 rgba(0,0,0,0.04);
+}
+
+.result-section {
+  flex: 1;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.input-section {
+  margin-top: auto;
 }
 
 .right-panel {
   flex: 1;
-  padding: 16px;
+  padding: 32px 32px 32px 32px;
   background: #181a1b;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }

@@ -4,13 +4,9 @@ import QueryResultDisplay from '../components/QueryResultDisplay.component';
 import GraphDisplay from '../components/GraphDisplay.component';
 import './HomePage.css';
 
-// Placeholder for backend integration
 const executeCypherQuery = async (query, queryType) => {
-  // Simulate API call
-  // Replace with actual fetch/axios call to backend
   if (!query) return { success: false, error: 'No query provided' };
   if (queryType === 'Read') {
-    // Simulate read result
     return {
       success: true,
       result: [
@@ -28,7 +24,6 @@ const executeCypherQuery = async (query, queryType) => {
       }
     };
   } else {
-    // Simulate write result
     return { success: true, result: 'Write query executed successfully.' };
   }
 };
@@ -51,14 +46,18 @@ const HomePage = () => {
   return (
     <div className="homepage-container">
       <div className="left-panel">
-        <QueryResultDisplay result={result} />
-        <QueryInputPanel
-          query={query}
-          queryType={queryType}
-          onQueryChange={handleQueryChange}
-          onQueryTypeChange={handleQueryTypeChange}
-          onRunQuery={handleRunQuery}
-        />
+        <div className="result-section">
+          <QueryResultDisplay result={result} />
+        </div>
+        <div className="input-section">
+          <QueryInputPanel
+            query={query}
+            queryType={queryType}
+            onQueryChange={handleQueryChange}
+            onQueryTypeChange={handleQueryTypeChange}
+            onRunQuery={handleRunQuery}
+          />
+        </div>
       </div>
       <div className="right-panel">
         <GraphDisplay graphData={graphData} />

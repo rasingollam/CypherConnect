@@ -1,16 +1,24 @@
 .query-result-display {
-  max-height: 300px;
+  max-height: 320px;
   overflow: auto;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   background: #23272b;
-  border: 1px solid #343a40;
-  padding: 12px;
-  border-radius: 4px;
+  border: 1.5px solid #343a40;
+  padding: 16px;
+  border-radius: 10px;
   color: #f5f5f5;
+  font-size: 1.04rem;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
 }
 
 .query-result-display.error {
   color: #ff6b6b;
+  font-weight: 600;
+}
+
+.query-result-display.success {
+  color: #43a047;
+  font-weight: 600;
 }
 
 .query-result-display table {
@@ -23,10 +31,11 @@
 .query-result-display th,
 .query-result-display td {
   border: 1px solid #343a40;
-  padding: 4px 8px;
+  padding: 6px 10px;
   text-align: left;
 }
 
 .query-result-display th {
   background: #181a1b;
+  font-weight: 600;
 }
