@@ -11,3 +11,20 @@ exports.writeCypherQuery = async (query) => {
         await session.close();
     }
 };
+
+exports.readAllQuery = async () => {
+    const session = driver.session();
+    try {
+        // Get all nodes and relationships
+        const result = await session.executeRead(async tx => {
+            return await tx.run(`
+                MATCH (n)
+                OPTIONAL MATCH (n)-[r]->(m)
+                RETURN n, r, m
+            `);
+        });
+        return result.records.map(record => record.toObject());
+    } finally {
+        await session.close();
+    }
+};

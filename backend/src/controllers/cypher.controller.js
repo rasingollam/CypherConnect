@@ -1,4 +1,4 @@
-const { writeCypherQuery } = require('../services/cypher.service');
+const { writeCypherQuery, readAllQuery } = require('../services/cypher.service');
 
 exports.writeCypher = async (req, res) => {
     const { query } = req.body;
@@ -7,6 +7,15 @@ exports.writeCypher = async (req, res) => {
     }
     try {
         const result = await writeCypherQuery(query);
+        res.json({ success: true, result });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.readAll = async (req, res) => {
+    try {
+        const result = await readAllQuery();
         res.json({ success: true, result });
     } catch (err) {
         res.status(500).json({ error: err.message });
