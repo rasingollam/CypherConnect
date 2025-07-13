@@ -100,10 +100,19 @@
   cursor: not-allowed;
 }
 
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  /* This is the key change: it prevents the container from collapsing to zero height */
+  overflow: hidden; 
+}
+
 .graph-container {
-  /* Allow this container to grow and fill the remaining space */
   flex-grow: 1;
   position: relative;
+  /* Ensure the container can have a height determined by the flex parent */
+  min-height: 0; 
 }
 
 .loading-text {
