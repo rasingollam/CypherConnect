@@ -29,17 +29,6 @@ const GraphDisplay = () => {
           onClick={loadGraph}
           disabled={loading}
           title="Refresh Graph"
-          style={{
-            background: '#23272b',
-            color: '#90caf9',
-            border: '1px solid #343a40',
-            borderRadius: '6px',
-            padding: '6px 14px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 600,
-            fontSize: '1rem',
-            marginLeft: '16px'
-          }}
         >
           {loading ? 'Refreshing...' : '⟳ Refresh'}
         </button>
