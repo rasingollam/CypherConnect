@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import * as d3 from 'd3';
 import { fetchAllGraphData } from '../services/Cypher.service';
 import './GraphDisplay.css';
 
 /**
  * Transforms Neo4j API response into a format compatible with Cytoscape.js.
+ * We will reuse this and then convert to D3's format.
  */
 function neo4jToCytoscapeElements(resultArr) {
   const nodesMap = new Map();
@@ -59,24 +61,39 @@ function neo4jToCytoscapeElements(resultArr) {
   return elements;
 }
 
+/**
+ * Converts Cytoscape-formatted elements to D3-compatible {nodes, links} format.
+ */
+function toD3Format(elements) {
+  const nodes = elements
+    .filter(el => el.group === 'nodes')
+    .map(el => ({ ...el.data }));
+
+  const links = elements
+    .filter(el => el.group === 'edges')
+    .map(el => ({ ...el.data }));
+
+  return { nodes, links };
+}
 
 const GraphDisplay = () => {
-  const [elements, setElements] = useState([]);
+  const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [loading, setLoading] = useState(true);
+  const d3Container = useRef(null);
 
   const loadGraph = async () => {
     setLoading(true);
     try {
       const data = await fetchAllGraphData();
       if (data && data.success) {
-        // We still transform the data to check if the helper function works
-        setElements(neo4jToCytoscapeElements(data.result));
+        const cytoElements = neo4jToCytoscapeElements(data.result);
+        setGraphData(toD3Format(cytoElements));
       } else {
-        setElements([]);
+        setGraphData({ nodes: [], links: [] });
       }
     } catch (error) {
       console.error("Failed to load graph data:", error);
-      setElements([]);
+      setGraphData({ nodes: [], links: [] });
     } finally {
       setLoading(false);
     }
@@ -86,10 +103,110 @@ const GraphDisplay = () => {
     loadGraph();
   }, []);
 
+  useEffect(() => {
+    if (graphData.nodes.length > 0 && d3Container.current) {
+      const { nodes, links } = graphData;
+      const container = d3Container.current;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      // Clear previous render
+      d3.select(container).selectAll('*').remove();
+
+      const svg = d3.select(container).append('svg')
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .attr('viewBox', [-width / 2, -height / 2, width, height])
+        .call(d3.zoom().on("zoom", (event) => {
+           g.attr("transform", event.transform)
+        }));
+
+      const g = svg.append("g");
+
+      const simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(120))
+        .force('charge', d3.forceManyBody().strength(-150))
+        .force('center', d3.forceCenter());
+
+      const link = g.append('g')
+        .attr('stroke', '#999')
+        .attr('stroke-opacity', 0.6)
+        .selectAll('line')
+        .data(links)
+        .join('line');
+
+      const node = g.append('g')
+        .selectAll('circle')
+        .data(nodes)
+        .join('circle')
+        .attr('r', 15)
+        .attr('fill', '#555')
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 1.5)
+        .call(drag(simulation));
+
+      const labels = g.append('g')
+        .selectAll('text')
+        .data(nodes)
+        .join('text')
+        .text(d => d.label)
+        .attr('text-anchor', 'middle')
+        .attr('dy', '.35em')
+        .attr('fill', 'white')
+        .style('font-size', '10px')
+        .style('pointer-events', 'none');
+
+      const linkLabels = g.append("g")
+        .selectAll("text")
+        .data(links)
+        .join("text")
+        .text(d => d.label)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#ccc")
+        .style("font-size", "8px")
+        .style("pointer-events", "none");
+
+      simulation.on('tick', () => {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+        node
+          .attr('cx', d => d.x)
+          .attr('cy', d => d.y);
+        labels
+          .attr('x', d => d.x)
+          .attr('y', d => d.y);
+        linkLabels
+          .attr("x", d => (d.source.x + d.target.x) / 2)
+          .attr("y", d => (d.source.y + d.target.y) / 2);
+      });
+
+      function drag(simulation) {
+        function dragstarted(event, d) {
+          if (!event.active) simulation.alphaTarget(0.3).restart();
+          d.fx = d.x;
+          d.fy = d.y;
+        }
+        function dragged(event, d) {
+          d.fx = event.x;
+          d.fy = event.y;
+        }
+        function dragended(event, d) {
+          if (!event.active) simulation.alphaTarget(0);
+          d.fx = null;
+          d.fy = null;
+        }
+        return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
+      }
+    }
+  }, [graphData]);
+
   return (
     <div className="graph-display">
       <div className="graph-header">
-        <h3>Graph Data (Debug View)</h3>
+        <h3>Graph Visualization (D3)</h3>
         <button
           className="refresh-btn"
           onClick={loadGraph}
@@ -99,14 +216,11 @@ const GraphDisplay = () => {
           {loading ? 'Refreshing...' : '⟳ Refresh'}
         </button>
       </div>
-      <div className="graph-container" style={{ overflow: 'auto' }}>
+      <div className="graph-container">
         {loading ? (
           <div className="loading-text">Loading Data...</div>
         ) : (
-          // Displaying the transformed data as JSON for debugging
-          <pre style={{ color: '#fff', padding: '10px' }}>
-            {JSON.stringify(elements, null, 2)}
-          </pre>
+          <div ref={d3Container} style={{ width: '100%', height: '100%' }} />
         )}
       </div>
     </div>
