@@ -28,3 +28,15 @@ exports.readAllQuery = async () => {
         await session.close();
     }
 };
+
+exports.readCypherQuery = async (query) => {
+    const session = driver.session();
+    try {
+        const result = await session.executeRead(async tx => {
+            return await tx.run(query);
+        });
+        return result.records.map(record => record.toObject());
+    } finally {
+        await session.close();
+    }
+};
