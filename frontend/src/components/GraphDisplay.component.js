@@ -79,6 +79,7 @@ function toD3Format(elements) {
 const GraphDisplay = () => {
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [loading, setLoading] = useState(true);
+  const [selectedNode, setSelectedNode] = useState(null);
   const d3Container = useRef(null);
 
   const loadGraph = async () => {
@@ -140,18 +141,22 @@ const GraphDisplay = () => {
         .data(nodes)
         .join('circle')
         .attr('r', 15)
-        .attr('fill', '#555')
+        .attr('fill', d => d.type === 'Person' ? '#e91e63' : (d.type === 'City' ? '#2196f3' : '#555'))
         .attr('stroke', '#fff')
         .attr('stroke-width', 1.5)
+        .on('click', (event, d) => {
+          event.stopPropagation(); // Prevent background click
+          setSelectedNode(d);
+        })
         .call(drag(simulation));
 
       const labels = g.append('g')
         .selectAll('text')
         .data(nodes)
         .join('text')
-        .text(d => d.label)
+        .text(d => `${d.label} (${d.type})`)
         .attr('text-anchor', 'middle')
-        .attr('dy', '.35em')
+        .attr('dy', '2.5em') // Position below the node
         .attr('fill', 'white')
         .style('font-size', '10px')
         .style('pointer-events', 'none');
@@ -216,11 +221,26 @@ const GraphDisplay = () => {
           {loading ? 'Refreshing...' : '⟳ Refresh'}
         </button>
       </div>
-      <div className="graph-container">
+      <div className="graph-container" onClick={() => setSelectedNode(null)}>
         {loading ? (
           <div className="loading-text">Loading Data...</div>
         ) : (
           <div ref={d3Container} style={{ width: '100%', height: '100%' }} />
+        )}
+        {selectedNode && (
+          <div className="node-legend">
+            <h4>Node Properties</h4>
+            <ul>
+              {Object.entries(selectedNode)
+                .filter(([key]) => !['index', 'x', 'y', 'vx', 'vy', 'fx', 'fy'].includes(key))
+                .map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : value.toString()}
+                  </li>
+              ))}
+            </ul>
+            <button className="close-legend" onClick={() => setSelectedNode(null)}>Close</button>
+          </div>
         )}
       </div>
     </div>
