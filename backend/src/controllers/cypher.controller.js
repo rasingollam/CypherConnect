@@ -1,0 +1,14 @@
+const { writeCypherQuery } = require('../services/cypher.service');
+
+exports.writeCypher = async (req, res) => {
+    const { query } = req.body;
+    if (!query) {
+        return res.status(400).json({ error: 'Cypher query is required.' });
+    }
+    try {
+        const result = await writeCypherQuery(query);
+        res.json({ success: true, result });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

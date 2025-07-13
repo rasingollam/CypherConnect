@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 
-// Define routes
+const cypherRoutes = require('./cypher.route');
+router.use('/cypher', cypherRoutes);
 
 // Export the router
 module.exports = router;
