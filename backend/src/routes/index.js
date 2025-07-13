@@ -2,11 +2,8 @@
 const express = require('express');
 const router = express.Router();
 
-// Import controller functions
-const { exampleController } = require('../controllers/index');
-
-// Define routes
-router.get('/example', exampleController);
+const cypherRoutes = require('./cypher.route');
+router.use('/cypher', cypherRoutes);
 
 // Export the router
 module.exports = router;
