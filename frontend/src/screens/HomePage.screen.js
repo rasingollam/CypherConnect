@@ -2,18 +2,21 @@ import React, { useState } from 'react';
 import QueryInputPanel from '../components/QueryInputPanel.component';
 import QueryResultDisplay from '../components/QueryResultDisplay.component';
 import GraphDisplay from '../components/GraphDisplay.component';
-import { writeCypherQuery } from '../services/Cypher.service';
+import { writeCypherQuery, readCypherQuery } from '../services/Cypher.service';
 import './HomePage.css';
 
 const HomePage = () => {
   const [query, setQuery] = useState('');
+  const [queryType, setQueryType] = useState('Read');
   const [result, setResult] = useState(null);
 
-  const handleQueryChange = (val) => setQuery(val);
-
   const handleRunQuery = async () => {
-    // Only handle write queries here
-    const res = await writeCypherQuery(query);
+    let res;
+    if (queryType === 'Read') {
+      res = await readCypherQuery(query);
+    } else {
+      res = await writeCypherQuery(query);
+    }
     setResult(res);
   };
 
@@ -26,9 +29,9 @@ const HomePage = () => {
         <div className="input-section">
           <QueryInputPanel
             query={query}
-            queryType="Write"
-            onQueryChange={handleQueryChange}
-            onQueryTypeChange={() => {}} // Not needed for now
+            queryType={queryType}
+            onQueryChange={setQuery}
+            onQueryTypeChange={setQueryType}
             onRunQuery={handleRunQuery}
           />
         </div>
