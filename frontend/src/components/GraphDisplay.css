@@ -1,0 +1,124 @@
+.graph-display {
+  width: 100%;
+  height: 100%;
+  background: #23272b;
+  border-radius: 12px;
+  border: 1.5px solid #343a40;
+  padding: 24px;
+  overflow: auto;
+  color: #f5f5f5;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-display {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #222;
+  color: #f5f5f5;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+}
+
+.graph-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #333;
+  border-bottom: 1px solid #444;
+  flex-shrink: 0;
+}
+
+.graph-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #90caf9;
+}
+
+.graph-header h3 {
+  margin: 0;
+}
+
+.graph-tip {
+  font-size: 0.98rem;
+  color: #b0b3b8;
+}
+
+.graph-json {
+  flex: 1;
+  overflow: auto;
+  background: #181a1b;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #343a40;
+}
+
+.refresh-btn {
+  background: #23272b;
+  color: #90caf9;
+  border: 1px solid #343a40;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-left: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.refresh-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.refresh-btn:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  /* This is the key change: it prevents the container from collapsing to zero height */
+  overflow: hidden; 
+}
+
+.graph-container {
+  flex-grow: 1;
+  position: relative;
+  /* Ensure the container can have a height determined by the flex parent */
+  min-height: 0; 
+}
+
+.loading-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+}
