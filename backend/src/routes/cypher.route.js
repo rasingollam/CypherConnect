@@ -3,6 +3,6 @@ const router = express.Router();
 const { writeCypher, readAll } = require('../controllers/cypher.controller');
 
 router.post('/write', writeCypher);
-router.get('/readAll', readAll);
+router.get('/read-all', readAll);
 
 module.exports = router;
