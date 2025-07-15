@@ -2,7 +2,7 @@ import React from 'react';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-cypher';
-import 'prismjs/themes/prism-okaidia.css'; // Dark theme for the editor
+import 'prismjs/themes/prism-solarizedlight.css';
 
 import './QueryInputPanel.css';
 

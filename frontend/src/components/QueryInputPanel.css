@@ -38,11 +38,12 @@
 .editor-container {
   flex-grow: 1;
   position: relative;
-  background-color: 181a1b; /* Matches prism-okaidia theme */
+  background-color: #1f3347; 
   border-radius: 5px;
   border: 1px solid #444;
   overflow: auto;
   font-family: 'Fira Code', 'Dank Mono', monospace;
+  font-size: 16px; /* Adjust this value to your preferred size */
 }
 
 .query-editor {
@@ -91,3 +92,4 @@
 .run-query-btn:hover {
   background-color: #218838;
 }
+
