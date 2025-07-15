@@ -88,19 +88,22 @@ const renderGraph = (data, container, onNodeClick, onLinkClick) => {
 
   const width = container.clientWidth || 340;
   const height = container.clientHeight || 220;
+  
   const svg = d3.select(container)
     .append('svg')
     .attr('width', '100%')
     .attr('height', '100%')
     .attr('viewBox', [0, 0, width, height]);
 
+  // Add a group for all elements to apply zoom to
+  const g = svg.append("g");
+
   const simulation = d3.forceSimulation(nodes)
-    // The .nodes(nodes) call is the fix. It tells the link force where to find the nodes.
     .force('link', d3.forceLink(links).id(d => d.id).distance(60))
     .force('charge', d3.forceManyBody().strength(-120))
     .force('center', d3.forceCenter(width / 2, height / 2));
 
-  const link = svg.append('g')
+  const link = g.append('g')
     .attr('stroke', '#90caf9')
     .attr('stroke-width', 2)
     .selectAll('line')
@@ -108,11 +111,30 @@ const renderGraph = (data, container, onNodeClick, onLinkClick) => {
     .join('line')
     .on('click', (event, d) => {
       event.stopPropagation();
-      if (onNodeClick) onNodeClick(null); // Deselect node
+      if (onNodeClick) onNodeClick(null);
       if (typeof onLinkClick === 'function') onLinkClick(d);
     });
 
-  const node = svg.append('g')
+  // Drag behavior for nodes
+  function drag(simulation) {
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+    return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
+  }
+
+  const node = g.append('g')
     .attr('stroke', '#fff')
     .attr('stroke-width', 1.5)
     .selectAll('circle')
@@ -123,9 +145,10 @@ const renderGraph = (data, container, onNodeClick, onLinkClick) => {
     .on('click', (event, d) => {
       event.stopPropagation();
       if (onNodeClick) onNodeClick(d);
-    });
+    })
+    .call(drag(simulation)); // Apply drag behavior
 
-  const label = svg.append('g')
+  const label = g.append('g')
     .selectAll('text')
     .data(nodes)
     .join('text')
@@ -134,19 +157,17 @@ const renderGraph = (data, container, onNodeClick, onLinkClick) => {
     .attr('fill', '#fff')
     .attr('font-size', 13)
     .style('cursor', 'pointer')
-    .text(d => `${d.label} (${d.type})`)
-    .on('click', (event, d) => {
-      event.stopPropagation();
-      if (onNodeClick) onNodeClick(d);
-    });
+    .style('pointer-events', 'none') // So clicks pass through to the node
+    .text(d => `${d.label} (${d.type})`);
 
-  const linkLabels = svg.append('g')
+  const linkLabels = g.append('g')
     .selectAll('text')
     .data(links)
     .join('text')
     .attr('text-anchor', 'middle')
     .attr('fill', '#ccc')
     .attr('font-size', 10)
+    .style('pointer-events', 'none')
     .text(d => d.label);
 
   simulation.on('tick', () => {
@@ -162,6 +183,12 @@ const renderGraph = (data, container, onNodeClick, onLinkClick) => {
       .attr('x', d => (d.source.x + d.target.x) / 2)
       .attr('y', d => (d.source.y + d.target.y) / 2);
   });
+
+  // Zoom behavior
+  const zoom = d3.zoom().on('zoom', (event) => {
+    g.attr('transform', event.transform);
+  });
+  svg.call(zoom);
 };
 
 const QueryResultDisplay = ({ result }) => {
