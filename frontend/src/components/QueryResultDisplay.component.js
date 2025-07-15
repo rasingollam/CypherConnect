@@ -86,11 +86,13 @@ const renderGraph = (data, container, onNodeClick) => {
 
   if (!nodes.length) return;
 
-  const width = 340, height = 220;
+  const width = container.clientWidth || 340;
+  const height = container.clientHeight || 220;
   const svg = d3.select(container)
     .append('svg')
-    .attr('width', width)
-    .attr('height', height);
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', [0, 0, width, height]);
 
   const simulation = d3.forceSimulation(nodes)
     .force('link', d3.forceLink(links).id(d => d.id).distance(60))
