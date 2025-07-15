@@ -27,6 +27,11 @@
 
 .App-link {
   color: #61dafb;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.14);
+}
+
+.App button {
+  box-shadow: 0 2px 8px rgba(33,150,243,0.14);
 }
 
 @keyframes App-logo-spin {

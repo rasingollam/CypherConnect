@@ -9,9 +9,22 @@
   }
 }
 
+@keyframes slideInRight {
+  from {
+    transform: translateX(60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .homepage-container {
   display: flex;
   height: 100vh;
+  width: 100vw; /* Ensure full viewport width */
+  overflow: hidden; /* Prevent overflow causing white line */
   background: #181a1b;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
@@ -24,7 +37,9 @@
   padding: 24px 20px 24px 24px;
   border-right: 1.5px solid #23272b;
   background: #23272b;
-  box-shadow: 2px 0 16px 0 rgba(0,0,0,0.10);
+  /* Add embossed shadow */
+  box-shadow: 0 4px 24px 0 rgba(33,150,243,0.16), 0 1.5px 0 0 #23272b inset;
+  border-radius: 16px;
   animation: slideInLeft 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -42,11 +57,17 @@
 
 .right-panel {
   flex: 1;
+  min-width: 0; /* Prevent flex child from overflowing */
   padding: 32px 32px 32px 32px;
   background: #181a1b;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  /* Animate right panel */
+  animation: slideInRight 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  /* Add embossed shadow */
+  box-shadow: 0 4px 24px 0 rgba(33,150,243,0.16), 0 1.5px 0 0 #23272b inset;
+  border-radius: 16px;
 }
 
 /* Logo container styles */

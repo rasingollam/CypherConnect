@@ -17,9 +17,10 @@ function HomePage() {
         justifyContent: 'center'
       }}>
         {/* Inline SVG, scaled down */}
-        <svg width="38" height="38" viewBox="0 0 1165 1383" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* ...SVG paths from your file... */}
-          {/* For brevity, paste the SVG content here */}
+        <svg width="38" height="38" viewBox="0 0 1165 1383" fill="none" xmlns="http://t.w3.org/2000/svg">
+          <path d="M0 0 C0.97425934 -0.00315216 1.94851868 -0.00630432 2.95230103 -0.009552 ..."/>
+          <path d="M0 0 C1.41249023 -0.01836914 1.41249023 -0.01836914 2.85351562 -0.03710938 ..."/>
+          {/* ...all other <path> elements from your SVG file... */}
         </svg>
       </div>
       <div className="left-panel">

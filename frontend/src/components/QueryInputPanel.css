@@ -51,11 +51,13 @@
   font-size: 1rem;
   font-weight: 500;
   transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.14);
 }
 
 .query-type-toggle button.active {
   background: #1976d2;
   color: #fff;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.18);
 }
 
 .query-type-toggle button:hover:not(.active) {
@@ -71,6 +73,7 @@
   margin-left: auto;
   padding: 7px 22px;
   transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.18);
 }
 
 .run-query-btn:hover {
