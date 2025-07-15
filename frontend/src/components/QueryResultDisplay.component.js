@@ -181,7 +181,17 @@ const QueryResultDisplay = ({ result }) => {
     return (
       <div className="query-result-display" style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ flex: 1, position: 'relative' }}>
-          <div ref={graphRef} style={{ marginBottom: 18 }} />
+          <div
+            ref={graphRef}
+            style={{
+              width: '100%',
+              height: '100%',
+              minHeight: 0,
+              minWidth: 0,
+              flex: 1,
+              position: 'relative'
+            }}
+          />
         </div>
         {selectedNode && (
           <div className="properties-sidebar">
@@ -193,7 +203,7 @@ const QueryResultDisplay = ({ result }) => {
                   <li key={key}>
                     <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : value.toString()}
                   </li>
-              ))}
+                ))}
             </ul>
             <button className="close-sidebar-btn" onClick={() => setSelectedNode(null)}>Close</button>
           </div>
