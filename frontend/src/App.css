@@ -22,10 +22,16 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  box-shadow: 0 4px 24px 0 rgba(33,150,243,0.08);
 }
 
 .App-link {
   color: #61dafb;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.14);
+}
+
+.App button {
+  box-shadow: 0 2px 8px rgba(33,150,243,0.14);
 }
 
 @keyframes App-logo-spin {

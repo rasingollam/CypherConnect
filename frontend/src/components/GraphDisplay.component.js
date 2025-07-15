@@ -80,10 +80,13 @@ const GraphDisplay = () => {
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [loading, setLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedLink, setSelectedLink] = useState(null); // State for selected link
   const d3Container = useRef(null);
 
   const loadGraph = async () => {
     setLoading(true);
+    setSelectedNode(null);
+    setSelectedLink(null); // Clear selection on refresh
     try {
       const data = await fetchAllGraphData();
       if (data && data.success) {
@@ -118,7 +121,6 @@ const GraphDisplay = () => {
         .attr('width', '100%')
         .attr('height', '100%')
         .attr('viewBox', [-width / 2, -height / 2, width, height])
-        // Add a class to the SVG for identification
         .attr('class', 'graph-svg-canvas') 
         .call(d3.zoom().on("zoom", (event) => {
            g.attr("transform", event.transform)
@@ -136,7 +138,13 @@ const GraphDisplay = () => {
         .attr('stroke-opacity', 0.6)
         .selectAll('line')
         .data(links)
-        .join('line');
+        .join('line')
+        .style('cursor', 'pointer')
+        .on('click', (event, d) => {
+          event.stopPropagation();
+          setSelectedNode(null); // Deselect any node
+          setSelectedLink(d);   // Select the link
+        });
 
       const node = g.append('g')
         .selectAll('circle')
@@ -147,8 +155,9 @@ const GraphDisplay = () => {
         .attr('stroke', '#fff')
         .attr('stroke-width', 1.5)
         .on('click', (event, d) => {
-          // We no longer need stopPropagation here as the parent handler is smarter
-          setSelectedNode(d);
+          event.stopPropagation();
+          setSelectedLink(null); // Deselect any link
+          setSelectedNode(d);    // Select the node
         })
         .call(drag(simulation));
 
@@ -158,7 +167,7 @@ const GraphDisplay = () => {
         .join('text')
         .text(d => `${d.label} (${d.type})`)
         .attr('text-anchor', 'middle')
-        .attr('dy', '2.5em') // Position below the node
+        .attr('dy', '2.5em')
         .attr('fill', 'white')
         .style('font-size', '10px')
         .style('pointer-events', 'none');
@@ -227,9 +236,9 @@ const GraphDisplay = () => {
         <div 
           className="graph-container" 
           onClick={(e) => {
-            // Close legend only if the click is on the SVG background, not a node
             if (e.target.classList.contains('graph-svg-canvas')) {
               setSelectedNode(null);
+              setSelectedLink(null); // Clear link selection on background click
             }
           }}
         >
@@ -252,6 +261,21 @@ const GraphDisplay = () => {
               ))}
             </ul>
             <button className="close-sidebar-btn" onClick={() => setSelectedNode(null)}>Close</button>
+          </div>
+        )}
+        {selectedLink && (
+          <div className="properties-sidebar">
+            <h4>Link Properties</h4>
+            <ul>
+              {Object.entries(selectedLink)
+                .filter(([key]) => !['index', 'x', 'y', 'vx', 'vy', 'fx', 'fy'].includes(key))
+                .map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : value.toString()}
+                  </li>
+              ))}
+            </ul>
+            <button className="close-sidebar-btn" onClick={() => setSelectedLink(null)}>Close</button>
           </div>
         )}
       </div>
