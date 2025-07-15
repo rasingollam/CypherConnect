@@ -78,7 +78,7 @@ function extractGraphElements(records) {
   };
 }
 
-const renderGraph = (data, container, onNodeClick) => {
+const renderGraph = (data, container, onNodeClick, onLinkClick) => {
   d3.select(container).selectAll('*').remove();
 
   const nodes = data.nodes || [];
@@ -95,6 +95,7 @@ const renderGraph = (data, container, onNodeClick) => {
     .attr('viewBox', [0, 0, width, height]);
 
   const simulation = d3.forceSimulation(nodes)
+    // The .nodes(nodes) call is the fix. It tells the link force where to find the nodes.
     .force('link', d3.forceLink(links).id(d => d.id).distance(60))
     .force('charge', d3.forceManyBody().strength(-120))
     .force('center', d3.forceCenter(width / 2, height / 2));
@@ -104,7 +105,12 @@ const renderGraph = (data, container, onNodeClick) => {
     .attr('stroke-width', 2)
     .selectAll('line')
     .data(links)
-    .join('line');
+    .join('line')
+    .on('click', (event, d) => {
+      event.stopPropagation();
+      if (onNodeClick) onNodeClick(null); // Deselect node
+      if (typeof onLinkClick === 'function') onLinkClick(d);
+    });
 
   const node = svg.append('g')
     .attr('stroke', '#fff')
@@ -161,16 +167,23 @@ const renderGraph = (data, container, onNodeClick) => {
 const QueryResultDisplay = ({ result }) => {
   const graphRef = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedLink, setSelectedLink] = useState(null);
 
   useEffect(() => {
-    setSelectedNode(null); // Clear selection on new result
+    setSelectedNode(null);
+    setSelectedLink(null);
     if (
       result &&
       Array.isArray(result.result) &&
       result.result.length > 0
     ) {
       const d3Data = extractGraphElements(result.result);
-      renderGraph(d3Data, graphRef.current, setSelectedNode);
+      renderGraph(
+        d3Data,
+        graphRef.current,
+        setSelectedNode,
+        setSelectedLink
+      );
     }
   }, [result]);
 
@@ -191,6 +204,10 @@ const QueryResultDisplay = ({ result }) => {
               flex: 1,
               position: 'relative'
             }}
+            onClick={() => {
+              setSelectedNode(null);
+              setSelectedLink(null);
+            }}
           />
         </div>
         {selectedNode && (
@@ -206,6 +223,21 @@ const QueryResultDisplay = ({ result }) => {
                 ))}
             </ul>
             <button className="close-sidebar-btn" onClick={() => setSelectedNode(null)}>Close</button>
+          </div>
+        )}
+        {selectedLink && (
+          <div className="properties-sidebar">
+            <h4>Relationship Properties</h4>
+            <ul>
+              {Object.entries(selectedLink)
+                .filter(([key]) => !['index', 'x', 'y', 'vx', 'vy', 'fx', 'fy'].includes(key))
+                .map(([key, value]) => (
+                  <li key={key}>
+                    <strong>{key}:</strong> {typeof value === 'object' ? JSON.stringify(value) : value.toString()}
+                  </li>
+                ))}
+            </ul>
+            <button className="close-sidebar-btn" onClick={() => setSelectedLink(null)}>Close</button>
           </div>
         )}
       </div>
