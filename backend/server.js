@@ -18,20 +18,7 @@ async function startServer() {
             console.log(`Server is running on http://localhost:${PORT}`);
         });
     } catch (err) {
-        // Friendly error message
-        console.error('❌ Failed to connect to Neo4j database.');
-        if (err.code === 'ServiceUnavailable') {
-            console.error('Reason: Could not connect to Neo4j at the specified host/port.');
-            console.error('Hint: Is Neo4j running and accessible at', process.env.NEO4J_URI || 'bolt://localhost:7687', '?');
-        } else if (err.code === 'Neo.ClientError.Security.Unauthorized') {
-            console.error('Reason: Authentication failed. Please check your NEO4J_USER and NEO4J_PASSWORD.');
-        } else {
-            console.error('Error:', err.message);
-        }
-        // Print stack trace only in development
-        if (process.env.NODE_ENV === 'development') {
-            console.error(err);
-        }
+        console.error('❌ Failed to connect to Neo4j:', err);
         process.exit(1);
     }
 }
